@@ -3,54 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CatatanBelanja</title>
+    <title>Catatan Belanja - Bootstrap & LocalStorage</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 <body>
-    <div class="container-fluid">
-        <h1 class="text-center text-uppercase">Catatan Belanja</h1>
-        <ul class="nav nav-underline justify-content-center mb-2">
-        </ul>
+    <div class="container-fluid mt-5">
+        <h1 class="text-center text-uppercase mb-4">Catatan Belanja</h1>
 
-        <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
+        <div id="carouselExample" class="carousel slide mb-4" data-bs-ride="carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img src="https://via.placeholder.com/800x400" class="d-block w-100" alt="Placeholder">
+                    <img src="https://via.placeholder.com/800x400?text=Selamat+Datang" class="d-block w-100" alt="Welcome">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://via.placeholder.com/800x400?text=Catatan+Belanja" class="d-block w-100" alt="Shopping Notes">
                 </div>
             </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
 
-        <div class="row mt-4">
+        <div class="row justify-content-center">
             <div class="col-md-6">
-                <div class="mb-3">
-                    <label for="Nama Barang" class="form-label">Nama Barang</label>
-                    <input type="text" class="form-control" id="Nama Barang">
-                </div>
-                <div class="mb-3">
-                    <label for="Jumlah Barang" class="form-label">Jumlah Barang</label>
-                    <input type="number" class="form-control" id="Jumlah Barang">
-                </div>
-                <div class="mb-3">
-                    <label for="Keterangan Barang" class="form-label">Keterangan Barang</label>
-                    <textarea class="form-control" id="Keterangan Barang"></textarea>
-                </div>
-                <button onclick="simpan()" class="btn btn-primary">Simpan</button>
-            </div>
-        </div>
-
-        <div class="row mt-2">
-            <div class="container text-center">
-                <div class="row">
-                    <div class="col">Item</div>
-                    <div class="col">Jumlah</div>
+                <div class="card p-4">
+                    <h5 class="card-title text-center">Tambah Barang</h5>
+                    <div class="mb-3">
+                        <label for="namaBarang" class="form-label">Nama Barang</label>
+                        <input type="text" class="form-control" id="namaBarang" placeholder="Masukkan nama barang">
+                    </div>
+                    <div class="mb-3">
+                        <label for="jumlahBarang" class="form-label">Jumlah Barang</label>
+                        <input type="number" class="form-control" id="jumlahBarang" placeholder="Masukkan jumlah">
+                    </div>
+                    <div class="mb-3">
+                        <label for="keteranganBarang" class="form-label">Keterangan</label>
+                        <textarea class="form-control" id="keteranganBarang" rows="3" placeholder="Masukkan keterangan"></textarea>
+                    </div>
+                    <button onclick="simpanBarang()" class="btn btn-primary w-100">Simpan</button>
                 </div>
             </div>
         </div>
 
-        <div id="list-Barang" class="row mt-4"></div>
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3 class="text-center mb-3">Daftar Barang</h3>
+                <table class="table table-striped table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nama Barang</th>
+                            <th>Jumlah</th>
+                            <th>Keterangan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="daftarBarang">
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <script src="scriptls.js"></script> 
+
+    <script>
+        function simpanBarang() {
+            const nama = document.getElementById('namaBarang').value;
+            const jumlah = document.getElementById('jumlahBarang').value;
+            const keterangan = document.getElementById('keteranganBarang').value;
+
+            if (!nama || !jumlah) {
+                alert('Nama dan jumlah barang harus diisi!');
+                return;
+            }
+
+            let barangList = JSON.parse(localStorage.getItem('barangList')) || [];
+
+            barangList.push({ nama, jumlah, keterangan });
+
+            localStorage.setItem('barangList', JSON.stringify(barangList));
+
+            document.getElementById('namaBarang').value = '';
+            document.getElementById('jumlahBarang').value = '';
+            document.getElementById('keteranganBarang').value = '';
+
+            tampilkanBarang();
+
+            alert('Barang berhasil disimpan!');
+        }
+
+        function tampilkanBarang() {
+            const barangList = JSON.parse(localStorage.getItem('barangList')) || [];
+            const tbody = document.getElementById('daftarBarang');
+            tbody.innerHTML = '';
+
+            barangList.forEach((barang, index) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${barang.nama}</td>
+                        <td>${barang.jumlah}</td>
+                        <td>${barang.keterangan}</td>
+                        <td>
+                            <button onclick="hapusBarang(${index})" class="btn btn-danger btn-sm">Hapus</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function hapusBarang(index) {
+            let barangList = JSON.parse(localStorage.getItem('barangList')) || [];
+            barangList.splice(index, 1);
+            localStorage.setItem('barangList', JSON.stringify(barangList));
+            tampilkanBarang();
+        }
+
+        window.onload = tampilkanBarang;
+    </script>
 </body>
 </html>
